@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>غرفة العمليات الاقتصادية | دراسة انسحاب الإمارات من أوبك</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Amiri:wght@400;700&display=swap');
+
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #1a2f4a;
+    --teal: #028090;
+    --teal-light: #02c39a;
+    --copper: #b87333;
+    --copper-light: #d4976a;
+    --gold: #c9a84c;
+    --cream: #e8e0d0;
+    --red: #c0392b;
+    --green: #27ae60;
+    --text-primary: #e8e0d0;
+    --text-muted: #8fa3b8;
+    --border: rgba(2, 128, 144, 0.3);
+    --card-bg: rgba(13, 27, 42, 0.85);
+    --success: #27ae60;
+    --fail: #c0392b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--navy);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-image: 
+      radial-gradient(ellipse at 20% 50%, rgba(2, 128, 144, 0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(184, 115, 51, 0.06) 0%, transparent 50%),
+      repeating-linear-gradient(0deg, transparent, transparent 49px, rgba(2,128,144,0.03) 50px),
+      repeating-linear-gradient(90deg, transparent, transparent 49px, rgba(2,128,144,0.03) 50px);
+  }
+
+  /* ============ HEADER ============ */
+  .header {
+    background: linear-gradient(135deg, rgba(10,20,35,0.98) 0%, rgba(26,47,74,0.95) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--teal-light);
+    box-shadow: 0 0 12px var(--teal-light);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .header-title h1 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: 1px;
+  }
+
+  .header-title span {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  .timer-display {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .timer-ring {
+    position: relative;
+    width: 56px; height: 56px;
+  }
+
+  .timer-ring svg { transform: rotate(-90deg); }
+
+  .timer-ring .ring-bg { fill: none; stroke: rgba(2,128,144,0.2); stroke-width: 3; }
+  .timer-ring .ring-progress { 
+    fill: none; stroke: var(--teal-light); stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+    stroke-dasharray: 138.16;
+    stroke-dashoffset: 0;
+  }
+
+  .timer-text {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--teal-light);
+    font-family: 'Cairo', monospace;
+  }
+
+  .score-badge {
+    background: rgba(2,128,144,0.15);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 16px;
+    text-align: center;
+  }
+
+  .score-badge .score-num {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--gold);
+  }
+
+  .score-badge .score-label {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* ============ PROGRESS BAR ============ */
+  .progress-strip {
+    height: 3px;
+    background: rgba(2,128,144,0.15);
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--teal-light));
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px var(--teal-light);
+  }
+
+  /* ============ MAIN CONTENT ============ */
+  .main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* ============ SCREEN SYSTEM ============ */
+  .screen {
+    display: none;
+    animation: fadeSlideIn 0.4s ease forwards;
+  }
+
+  .screen.active { display: block; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ WELCOME SCREEN ============ */
+  .welcome-card {
+    background: linear-gradient(135deg, rgba(26,47,74,0.9) 0%, rgba(13,27,42,0.95) 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .welcome-card::before {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle at 50% 50%, rgba(2,128,144,0.04) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .welcome-badge {
+    display: inline-block;
+    background: rgba(184,115,51,0.15);
+    border: 1px solid rgba(184,115,51,0.4);
+    border-radius: 6px;
+    padding: 4px 14px;
+    font-size: 11px;
+    color: var(--copper-light);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .welcome-card h2 {
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1.3;
+    margin-bottom: 12px;
+  }
+
+  .welcome-card p {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .mode-card {
+    background: rgba(13,27,42,0.6);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: center;
+  }
+
+  .mode-card:hover, .mode-card.selected {
+    border-color: var(--teal);
+    background: rgba(2,128,144,0.12);
+    transform: translateY(-2px);
+  }
+
+  .mode-card.selected { border-color: var(--teal-light); }
+
+  .mode-icon { font-size: 28px; margin-bottom: 10px; }
+  .mode-title { font-size: 14px; font-weight: 700; color: var(--cream); margin-bottom: 4px; }
+  .mode-desc { font-size: 11px; color: var(--text-muted); }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-light) 100%);
+    color: var(--navy);
+    border: none;
+    border-radius: 10px;
+    padding: 14px 40px;
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 20px rgba(2,195,154,0.3);
+    letter-spacing: 0.5px;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba(2,195,154,0.4);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid rgba(143,163,184,0.3);
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 12px;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--text-muted);
+    color: var(--cream);
+  }
+
+  /* ============ CONCEPT REVIEW SCREEN ============ */
+  .concept-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .concept-counter {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .concept-counter strong { color: var(--teal-light); }
+
+  .concept-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 36px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .concept-card::after {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--teal), var(--teal-light));
+  }
+
+  .concept-category {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--copper);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .concept-category::before {
+    content: '';
+    width: 16px; height: 1px;
+    background: var(--copper);
+  }
+
+  .concept-card h3 {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--cream);
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+
+  .concept-body {
+    font-size: 15px;
+    color: #b8cfe0;
+    line-height: 1.8;
+  }
+
+  .key-insight {
+    background: rgba(2,128,144,0.1);
+    border: 1px solid rgba(2,128,144,0.3);
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--teal-light);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .key-insight::before { content: '⚡'; font-size: 16px; }
+
+  .stat-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .stat-chip {
+    background: rgba(184,115,51,0.1);
+    border: 1px solid rgba(184,115,51,0.3);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+    min-width: 100px;
+  }
+
+  .stat-chip .stat-val {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--copper-light);
+    display: block;
+  }
+
+  .stat-chip .stat-lbl {
+    font-size: 10px;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+  }
+
+  .btn-nav {
+    background: rgba(2,128,144,0.15);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    border-radius: 10px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-nav:hover { background: rgba(2,128,144,0.3); border-color: var(--teal); }
+  .btn-nav:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .btn-nav.primary {
+    background: linear-gradient(135deg, var(--teal), var(--teal-light));
+    color: var(--navy);
+    border-color: transparent;
+    font-weight: 700;
+  }
+
+  .btn-nav.primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(2,195,154,0.3); }
+
+  /* ============ QUIZ SCREEN ============ */
+  .quiz-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 36px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .quiz-type-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 4px;
+    padding: 3px 10px;
+  }
+
+  .quiz-q-num { font-size: 12px; color: var(--text-muted); }
+
+  .quiz-question {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+
+  .options-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .option-btn {
+    background: rgba(13,27,42,0.7);
+    border: 1px solid rgba(143,163,184,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    text-align: right;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    background: rgba(2,128,144,0.15);
+    border-color: var(--teal);
+    transform: translateX(-4px);
+  }
+
+  .option-letter {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    background: rgba(143,163,184,0.1);
+    border: 1px solid rgba(143,163,184,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .option-btn.correct {
+    background: rgba(39,174,96,0.15);
+    border-color: var(--success);
+  }
+
+  .option-btn.correct .option-letter {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+  }
+
+  .option-btn.wrong {
+    background: rgba(192,57,43,0.12);
+    border-color: var(--fail);
+  }
+
+  .option-btn.wrong .option-letter {
+    background: var(--fail);
+    color: white;
+    border-color: var(--fail);
+  }
+
+  .option-btn:disabled { cursor: not-allowed; }
+
+  .feedback-box {
+    margin-top: 20px;
+    padding: 16px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.7;
+    display: none;
+  }
+
+  .feedback-box.show { display: block; animation: fadeSlideIn 0.3s ease; }
+
+  .feedback-box.correct-fb {
+    background: rgba(39,174,96,0.1);
+    border: 1px solid rgba(39,174,96,0.3);
+    color: #a8d5b5;
+  }
+
+  .feedback-box.wrong-fb {
+    background: rgba(192,57,43,0.1);
+    border: 1px solid rgba(192,57,43,0.3);
+    color: #e0a8a0;
+  }
+
+  .feedback-title {
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ============ FLASHCARD SCREEN ============ */
+  .flashcard-wrap {
+    perspective: 1200px;
+    margin-bottom: 24px;
+    cursor: pointer;
+    height: 280px;
+  }
+
+  .flashcard-inner {
+    position: relative;
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .flashcard-inner.flipped { transform: rotateY(180deg); }
+
+  .flashcard-face {
+    position: absolute;
+    width: 100%; height: 100%;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .flashcard-front {
+    background: linear-gradient(135deg, rgba(26,47,74,0.95) 0%, rgba(2,128,144,0.15) 100%);
+    border: 1px solid var(--border);
+  }
+
+  .flashcard-back {
+    background: linear-gradient(135deg, rgba(184,115,51,0.15) 0%, rgba(13,27,42,0.95) 100%);
+    border: 1px solid rgba(184,115,51,0.3);
+    transform: rotateY(180deg);
+  }
+
+  .flashcard-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  .flashcard-q {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.5;
+  }
+
+  .flashcard-a {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--copper-light);
+    line-height: 1.7;
+  }
+
+  .flashcard-a .highlight {
+    color: var(--teal-light);
+    font-weight: 800;
+  }
+
+  .flip-cue {
+    margin-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  /* ============ RESULTS SCREEN ============ */
+  .results-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 48px 40px;
+    text-align: center;
+  }
+
+  .results-badge {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+  }
+
+  .results-badge.excellent { background: rgba(39,174,96,0.15); border: 2px solid var(--success); }
+  .results-badge.good { background: rgba(201,168,76,0.15); border: 2px solid var(--gold); }
+  .results-badge.needs-work { background: rgba(192,57,43,0.15); border: 2px solid var(--fail); }
+
+  .results-score-big {
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .results-label { font-size: 15px; color: var(--text-muted); margin-bottom: 32px; }
+
+  .results-stats {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+
+  .res-stat { text-align: center; }
+  .res-stat-val { font-size: 24px; font-weight: 800; }
+  .res-stat-lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .res-stat-val.correct-c { color: var(--success); }
+  .res-stat-val.wrong-c { color: var(--fail); }
+  .res-stat-val.time-c { color: var(--gold); }
+
+  .results-message {
+    background: rgba(2,128,144,0.08);
+    border: 1px solid rgba(2,128,144,0.2);
+    border-radius: 10px;
+    padding: 16px 24px;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  /* ============ ANALYST CHALLENGE ============ */
+  .challenge-question {
+    background: linear-gradient(135deg, rgba(184,115,51,0.08) 0%, rgba(13,27,42,0.9) 100%);
+    border: 1px solid rgba(184,115,51,0.25);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+
+  .challenge-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--copper);
+    letter-spacing: 2px;
+    margin-bottom: 16px;
+  }
+
+  .challenge-text {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--cream);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .challenge-textarea {
+    width: 100%;
+    background: rgba(13,27,42,0.8);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px;
+    color: var(--cream);
+    resize: vertical;
+    min-height: 120px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.7;
+  }
+
+  .challenge-textarea:focus { border-color: var(--teal); }
+
+  .challenge-answer {
+    background: rgba(2,128,144,0.08);
+    border: 1px solid rgba(2,128,144,0.25);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: #b0cfe0;
+    line-height: 1.8;
+    display: none;
+  }
+
+  .challenge-answer.show { display: block; animation: fadeSlideIn 0.3s ease; }
+  .challenge-answer strong { color: var(--teal-light); }
+
+  /* ============ SECTION DIVIDER ============ */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .section-label::before, .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-label span {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    white-space: nowrap;
+  }
+
+  /* ============ TOAST ============ */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: rgba(13,27,42,0.96);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cream);
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    white-space: nowrap;
+    backdrop-filter: blur(12px);
+  }
+
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.correct { border-color: var(--success); color: #a8d5b5; }
+  .toast.wrong { border-color: var(--fail); color: #e0a8a0; }
+
+  /* ============ TIMELINE ============ */
+  .timeline {
+    position: relative;
+    padding-right: 24px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    right: 8px; top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--teal), rgba(2,128,144,0.1));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+    padding-right: 24px;
+  }
+
+  .timeline-dot {
+    position: absolute;
+    right: 0; top: 6px;
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--teal);
+    border: 2px solid var(--navy);
+    box-shadow: 0 0 8px var(--teal);
+  }
+
+  .timeline-year {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--teal-light);
+    margin-bottom: 4px;
+  }
+
+  .timeline-event {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+
+  .timeline-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* ============ KEYBOARD SHORTCUTS ============ */
+  kbd {
+    background: rgba(143,163,184,0.15);
+    border: 1px solid rgba(143,163,184,0.3);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-family: monospace;
+    color: var(--text-muted);
+  }
+
+  .shortcuts-hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 16px;
+  }
+
+  .section-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .section-pill {
+    background: rgba(13,27,42,0.7);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .section-pill:hover { border-color: var(--teal); color: var(--cream); }
+  .section-pill.active { background: rgba(2,128,144,0.2); border-color: var(--teal); color: var(--teal-light); }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .mode-grid { grid-template-columns: 1fr; }
+    .results-stats { gap: 20px; }
+    .welcome-card { padding: 32px 20px; }
+    .concept-card, .quiz-card { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-title">
+    <div class="logo-dot"></div>
+    <div>
+      <h1>غرفة العمليات الاقتصادية</h1>
+      <span>انسحاب الإمارات من أوبك — تحليل اقتصادي شامل</span>
+    </div>
+  </div>
+  <div class="timer-display">
+    <div class="timer-ring">
+      <svg width="56" height="56" viewBox="0 0 56 56">
+        <circle class="ring-bg" cx="28" cy="28" r="22"/>
+        <circle class="ring-progress" id="ringProgress" cx="28" cy="28" r="22"/>
+      </svg>
+      <div class="timer-text" id="timerText">10:00</div>
+    </div>
+    <div class="score-badge">
+      <div class="score-num" id="scoreDisplay">0</div>
+      <div class="score-label">نقطة</div>
+    </div>
+  </div>
+</header>
+
+<div class="progress-strip">
+  <div class="progress-fill" id="progressBar" style="width: 0%"></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- SCREEN: WELCOME -->
+  <div class="screen active" id="screen-welcome">
+    <div class="welcome-card">
+      <div class="welcome-badge">🛢️ دوسيه استخباراتي اقتصادي</div>
+      <h2>زلزال في أسواق الطاقة</h2>
+      <p>لديك <strong style="color:var(--teal-light)">10 دقائق</strong> لإتقان هذا الملف الاستراتيجي وتحويل نفسك إلى محلل اقتصادي متخصص في أسواق النفط والطاقة.</p>
+
+      <div class="mode-grid">
+        <div class="mode-card selected" onclick="selectMode('full')" id="mode-full">
+          <div class="mode-icon">🎯</div>
+          <div class="mode-title">الجلسة الكاملة</div>
+          <div class="mode-desc">مراجعة + اختبار + تحليل</div>
+        </div>
+        <div class="mode-card" onclick="selectMode('quiz')" id="mode-quiz">
+          <div class="mode-icon">⚡</div>
+          <div class="mode-title">اختبار سريع</div>
+          <div class="mode-desc">20 سؤالاً في 10 دقائق</div>
+        </div>
+        <div class="mode-card" onclick="selectMode('flash')" id="mode-flash">
+          <div class="mode-icon">🃏</div>
+          <div class="mode-title">بطاقات الحفظ</div>
+          <div class="mode-desc">المفاهيم الأساسية</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="startSession()">🚀 ابدأ الجلسة</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: CONCEPTS -->
+  <div class="screen" id="screen-concepts">
+    <div class="section-nav" id="conceptNav"></div>
+    <div class="concept-header">
+      <div class="concept-counter">المفهوم <strong id="conceptNum">1</strong> من <strong id="conceptTotal">8</strong></div>
+    </div>
+    <div id="conceptContent"></div>
+    <div class="nav-row">
+      <button class="btn-nav" id="btnPrevConcept" onclick="navConcept(-1)">→ السابق</button>
+      <button class="btn-nav primary" id="btnNextConcept" onclick="navConcept(1)">التالي ←</button>
+    </div>
+    <div class="shortcuts-hint">
+      <kbd>←</kbd> <kbd>→</kbd> للتنقل • <kbd>Space</kbd> للمتابعة
+    </div>
+  </div>
+
+  <!-- SCREEN: FLASHCARDS -->
+  <div class="screen" id="screen-flash">
+    <div class="concept-header">
+      <div class="concept-counter">البطاقة <strong id="flashNum">1</strong> من <strong id="flashTotal">10</strong></div>
+      <span style="font-size:12px;color:var(--text-muted)">اضغط للكشف عن الجواب</span>
+    </div>
+    <div class="flashcard-wrap" onclick="flipCard()">
+      <div class="flashcard-inner" id="flashcardInner">
+        <div class="flashcard-face flashcard-front">
+          <div class="flashcard-hint">📖 السؤال</div>
+          <div class="flashcard-q" id="flashQ"></div>
+          <div class="flip-cue">🔄 اضغط للكشف</div>
+        </div>
+        <div class="flashcard-face flashcard-back">
+          <div class="flashcard-hint">✅ الجواب</div>
+          <div class="flashcard-a" id="flashA"></div>
+        </div>
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-nav" onclick="navFlash(-1)">→ السابقة</button>
+      <button class="btn-nav primary" onclick="navFlash(1)">التالية ←</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: QUIZ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-card">
+      <div class="quiz-meta">
+        <div class="quiz-type-badge" id="quizTypeBadge">اختيار متعدد</div>
+        <div class="quiz-q-num">سؤال <span id="qNum">1</span> / <span id="qTotal">15</span></div>
+      </div>
+      <div class="quiz-question" id="quizQuestion"></div>
+      <div class="options-grid" id="optionsGrid"></div>
+      <div class="feedback-box" id="feedbackBox"></div>
+    </div>
+    <div class="nav-row">
+      <div></div>
+      <button class="btn-nav primary" id="btnNextQ" onclick="nextQuestion()" style="display:none">السؤال التالي ←</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: ANALYST CHALLENGE -->
+  <div class="screen" id="screen-analyst">
+    <div class="section-label"><span>🧠 تحدي المحلل الاقتصادي</span></div>
+    <div id="challengeContent"></div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="revealAnswer()">🔍 اكشف الإجابة النموذجية</button>
+      <button class="btn-nav primary" id="btnNextChallenge" onclick="nextChallenge()">التحدي التالي ←</button>
+    </div>
+  </div>
+
+  <!-- SCREEN: RESULTS -->
+  <div class="screen" id="screen-results">
+    <div class="results-card">
+      <div class="results-badge" id="resultsBadge"></div>
+      <div class="results-score-big" id="resultsScore"></div>
+      <div class="results-label" id="resultsLabel"></div>
+      <div class="results-stats">
+        <div class="res-stat">
+          <div class="res-stat-val correct-c" id="resCorrect">0</div>
+          <div class="res-stat-lbl">إجابات صحيحة</div>
+        </div>
+        <div class="res-stat">
+          <div class="res-stat-val wrong-c" id="resWrong">0</div>
+          <div class="res-stat-lbl">إجابات خاطئة</div>
+        </div>
+        <div class="res-stat">
+          <div class="res-stat-val time-c" id="resTime">-</div>
+          <div class="res-stat-lbl">الوقت المتبقي</div>
+        </div>
+      </div>
+      <div class="results-message" id="resultsMessage"></div>
+      <button class="btn-primary" onclick="restartSession()">🔄 جلسة جديدة</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const CONCEPTS = [
+  {
+    category: "الحدث الأساسي",
+    title: "انسحاب الإمارات من أوبك",
+    body: "في 1 مايو 2026، أعلنت الإمارات العربية المتحدة رسمياً انسحابها من منظمة أوبك، بعد <strong style='color:var(--teal-light)'>59 عاماً</strong> من العضوية. المبرر الرسمي: التماشي مع الرؤية الاستراتيجية والاقتصادية طويلة الأمد، ومراجعة السياسة الإنتاجية. لكن هذا البيان الدبلوماسي يطرح أسئلة أكثر مما يجيب.",
+    insight: "بيان دبلوماسي بامتياز: لماذا الانسحاب؟ ولماذا الآن تحديداً في ظل الظروف الجيوسياسية الراهنة؟",
+    stats: [
+      { val: "59 سنة", lbl: "مدة العضوية" },
+      { val: "1 مايو 2026", lbl: "تاريخ الإعلان" },
+      { val: "28 أبريل", lbl: "تاريخ التنفيذ" }
+    ]
+  },
+  {
+    category: "تحليل مقارن",
+    title: "لماذا انسحاب الإمارات خطير بشكل استثنائي؟",
+    body: "انسحابات سابقة (إندونيسيا 2016، قطر 2019، الإكوادور 2020، أنغولا 2024) كان تأثيرها <strong style='color:var(--copper-light)'>محدوداً</strong> لأن هذه الدول تملك طاقة إنتاجية فائضة صغيرة. الإمارات مختلفة تماماً: تمتلك ثاني أكبر طاقة إنتاجية فائضة في أوبك — أكثر من <strong style='color:var(--teal-light)'>3.0 مليون برميل/يوم</strong>، تساوي السعودية تقريباً.",
+    insight: "خروج الإمارات ليس مجرد نقص في الأعضاء، بل خصم مباشر من قدرة المنظمة على إدارة المعروض العالمي وقت الأزمات.",
+    stats: [
+      { val: "+3.0 م.ب", lbl: "طاقة فائضة إماراتية" },
+      { val: "+3.0 م.ب", lbl: "طاقة فائضة سعودية" },
+      { val: "0.3-0.4", lbl: "طاقة المنسحبين السابقين" }
+    ]
+  },
+  {
+    category: "التاريخ الاقتصادي",
+    title: "نشأة أوبك: من المنافسة إلى التنسيق",
+    body: "تأسست أوبك في سبتمبر 1960 باجتماع بغداد التاريخي عبر 5 دول (السعودية، العراق، الكويت، إيران، فنزويلا). الهدف الاستراتيجي: <strong style='color:var(--teal-light)'>كسر هيمنة شركات النفط الغربية الكبرى</strong> (Seven Sisters). انضمت إمارة أبوظبي عام 1967، ثم ورثتها دولة الإمارات عند تأسيسها عام 1971.",
+    insight: "التحول الاستراتيجي الجوهري: من المنافسة الفردية لكل دولة مع الشركات الغربية → إلى التنسيق الجماعي للسياسات النفطية.",
+    timeline: [
+      { year: "1960", event: "تأسيس أوبك", detail: "5 دول في بغداد لكسر هيمنة الشركات الغربية" },
+      { year: "1967", event: "انضمام أبوظبي", detail: "أول وجود إماراتي في المنظمة" },
+      { year: "1971", event: "تأسيس الإمارات", detail: "توارثت العضوية رسمياً" },
+      { year: "1982", event: "نظام الحصص", detail: "مارس: سقف إنتاج كلي + حصص صارمة لكل دولة" }
+    ]
+  },
+  {
+    category: "الاقتصاد الكلي",
+    title: "العصر الذهبي: تسليح النفط (1973)",
+    body: "في أكتوبر 1973، حظرت أوبك تصدير النفط للدول الداعمة لإسرائيل ('النفط العربي ليس أغلى من الدم العربي'). <strong style='color:var(--copper-light)'>مذكرة الاستخبارات البريطانية (12 ديسمبر 1973)</strong>: كشفت أن سلاح النفط دفع الولايات المتحدة للتفكير جدياً في إرسال قوات عسكرية للاستيلاء على حقول السعودية، الكويت، وأبوظبي.",
+    insight: "النتيجة: أوبك أثبتت أنها ليست مجرد منظمة اقتصادية، بل قوة سيادية قادرة على إخضاع أقوى اقتصادات العالم.",
+    stats: [
+      { val: "4× ارتفاع", lbl: "أسعار النفط 1973" },
+      { val: "TOP SECRET", lbl: "مذكرة UK Eyes Alpha" }
+    ]
+  },
+  {
+    category: "آليات السوق",
+    title: "نظام الحصص: الميزان الاستراتيجي",
+    body: "مبدأ الكارتل الاقتصادي لأوبك: تضحية جماعية بنسب مختلفة لتحقيق مصلحة جماعية. الأعضاء يخفضون إنتاجهم قسراً لمنع انهيار الأسعار. <strong style='color:var(--teal-light)'>نجاح النظام يعتمد كلياً على التزام الجميع.</strong> وهنا تكمن المشكلة الهيكلية الجوهرية.",
+    insight: "المعادلة: ↓ حجم الإنتاج (التضحية الفردية) → ↑ ارتفاع الأسعار (المكسب الجماعي) = التوازن الاستراتيجي",
+    stats: [
+      { val: "مارس 1982", lbl: "إقرار نظام الحصص" }
+    ]
+  },
+  {
+    category: "نظرية الألعاب",
+    title: "معضلة الراكب المجاني (Free Rider Problem)",
+    body: "هذه المعضلة هي جوهر أزمة أوبك الهيكلية. أوبك تخفض إنتاجها قسراً ← الأسعار العالمية ترتفع ← <strong style='color:var(--copper-light)'>النفط الصخري الأمريكي</strong> يستغل الأسعار المرتفعة لضخ كميات هائلة دون أي تكلفة خفض ← أوبك تفقد حصتها السوقية لصالح منتجين من خارج المنظمة. السؤال المحوري: كيف تمنع الآخرين من الاستفادة المجانية من تضحياتك؟",
+    insight: "هذا التحدي الهيكلي لا حل له داخل إطار أوبك التقليدي — وهو ما دفع لميلاد أوبك بلس.",
+    stats: [
+      { val: "Free Rider", lbl: "الراكب المجاني" },
+      { val: "الصخري الأمريكي", lbl: "المستفيد الرئيسي" }
+    ]
+  },
+  {
+    category: "التطور المؤسسي",
+    title: "ولادة أوبك بلس (2016) وحرب الأسعار",
+    body: "في 2014-2016، حاولت أوبك كسر النفط الصخري عبر إغراق السوق — <strong style='color:var(--fail)'>النتيجة: خسارة 450 مليار دولار</strong> من إيرادات أوبك. الحل: عام 2016، تحالف أوبك + روسيا وحلفائها (أوبك بلس) لتخفيض 1.8 مليون برميل يومياً. التوزيع: خارج أوبك (روسيا): خفض 600 ألف. داخل أوبك: السعودية 486، العراق 210، الإمارات 139 ألف برميل.",
+    insight: "أوبك بلس كانت الحل الإبداعي لمشكلة الراكب المجاني — لكنه خلق مشكلة جديدة للإمارات.",
+    stats: [
+      { val: "1.8 م.ب", lbl: "إجمالي تخفيضات 2016" },
+      { val: "450 مليار $", lbl: "خسائر حرب 2014-2016" }
+    ]
+  },
+  {
+    category: "جوهر الخلاف",
+    title: "أزمة الطاقة الإنتاجية الفائضة",
+    body: "المعضلة الإماراتية: الإمارات استثمرت عشرات المليارات لرفع طاقتها من 2.5 م.ب/يوم (2004) → 4.8 م.ب (اليوم) → مستهدف 5.5 م.ب (2027-2030). لكن حصتها في أوبك بلس قيّدتها عند إنتاج أقل بكثير. كلما استثمرت أكثر في البنية التحتية، <strong style='color:var(--copper-light)'>زادت نسبة الطاقة المعطلة (Idle Capacity)</strong> بسبب قيود أوبك.",
+    insight: "فاتورة الفرصة الضائعة: 1.2 م.ب × 108 $/برميل = 130 مليون $/يوم → 3.9 مليار $/شهر → <strong style='color:var(--teal-light)'>47.5 مليار دولار سنوياً!</strong>",
+    stats: [
+      { val: "4.8 م.ب", lbl: "الطاقة الفعلية اليوم" },
+      { val: "1.2 م.ب", lbl: "الطاقة المعطلة" },
+      { val: "$47.5 م", lbl: "خسارة سنوية مقدرة" }
+    ]
+  },
+  {
+    category: "الصراع الداخلي",
+    title: "الصدام العلني الأول: معركة خط الأساس (2021)",
+    body: "في 2021، اندلع أول خلاف علني بين الإمارات والسعودية. الإمارات طالبت بحصة مبنية على <strong style='color:var(--teal-light)'>طاقتها الإنتاجية في أبريل 2020 (4 م.ب/يوم)</strong>. أوبك أصر على القياس بناءً على إنتاج أكتوبر 2018 (3.16 م.ب). الحل المؤقت (أبريل 2022): رفع خط الأساس للإمارات إلى 3.6 م.ب — لكنه لم يعالج المشكلة الهيكلية لنمو السعة السريع.",
+    insight: "الصراع لم يُحل، بل أُجّل — مما جعل الانسحاب مسألة وقت.",
+    stats: [
+      { val: "3.16 م.ب", lbl: "خط أوبك المعتمد" },
+      { val: "4.00 م.ب", lbl: "المطلب الإماراتي" },
+      { val: "3.6 م.ب", lbl: "التسوية المؤقتة 2022" }
+    ]
+  },
+  {
+    category: "المحفز الجيوسياسي",
+    title: "البجعة السوداء: الحرب الأمريكية-الإسرائيلية على إيران (فبراير 2026)",
+    body: "الحرب غيّرت كل شيء. التداعيات المباشرة على الإمارات:<br>• <strong style='color:var(--fail)'>إغلاق إيراني لمضيق هرمز</strong> (خنق صادرات الطاقة الخليجية)<br>• ضربات انتقامية إيرانية استهدفت البنية التحتية المدنية والنفطية<br>• <strong style='color:var(--copper-light)'>الإمارات الأكثر تضرراً</strong> — تجاوزت ما تعرضت له إسرائيل نفسها",
+    insight: "الضرر الهائل في البنية التحتية خلق حاجة ماسة لرؤوس أموال ضخمة وفورية لتمويل إعادة الإعمار، مما جعل قيود أوبك عائقاً لا يُحتمل.",
+    stats: [
+      { val: "هرمز مغلق", lbl: "العائق اللوجستي" },
+      { val: "إعادة إعمار", lbl: "الحاجة الملحة" }
+    ]
+  },
+  {
+    category: "ديناميكيات السوق",
+    title: "لغز السوق: لماذا لم تنهار الأسعار فور الإعلان؟",
+    body: "توقع المحللون انهيار فورياً في الأسعار، لكن السوق بقي مستقراً. السبب: <strong style='color:var(--teal-light)'>عائقان متزامنان</strong>:<br>• <strong>عائق تشغيلي:</strong> الأضرار في البنية التحتية تعني عدم القدرة على رفع الإنتاج فوراً<br>• <strong>عائق لوجستي:</strong> مضيق هرمز لا يزال مغلقاً — النفط عالق فيزيائياً ولا يصل للأسواق",
+    insight: "التأثير الحقيقي للإعلان لن يضرب الأسواق في المدى القصير، بل سيبدأ كابوس المعروض الحقيقي في منتصف إلى أواخر عام 2027.",
+    stats: [
+      { val: "18 شهراً", lbl: "للإصلاح والتشغيل التدريجي" },
+      { val: "2027", lbl: "موعد التأثير الفعلي في السوق" },
+      { val: "+4.5 م.ب", lbl: "إنتاج إماراتي متوقع بعد 18 شهراً" }
+    ]
+  },
+  {
+    category: "استراتيجية طويلة الأمد",
+    title: "السباق مع الزمن: منطق تسييل الأصول",
+    body: "البُعد الاستراتيجي العميق: الإمارات تتوقع اقتراب <strong style='color:var(--teal-light)'>ذروة الطلب العالمي على النفط (Peak Oil Demand)</strong> مع صعود الطاقة النظيفة والمركبات الكهربائية. الاستراتيجية المثلى: استخراج وبيع أكبر كمية ممكنة من الاحتياطيات الآن قبل أن تفقد قيمتها.",
+    insight: "حصص أوبك كانت تقف عائقاً أمام هذا التسييل السريع — فالانسحاب قرار عقلاني استراتيجياً.",
+    stats: [
+      { val: "Peak Demand", lbl: "ذروة الطلب العالمي" },
+      { val: "تسييل الأصول", lbl: "الاستراتيجية المثلى" }
+    ]
+  },
+  {
+    category: "السيناريوهات المستقبلية",
+    title: "مصفوفة السيناريوهات: كيف سترد السعودية وأوبك؟",
+    body: "<strong style='color:var(--teal-light)'>السيناريو 1 — الاستيعاب (Accommodation):</strong> أوبك (بقيادة السعودية) تقرر تحمل العبء وتسحب من السوق كمية مماثلة للكمية الإضافية الإماراتية للحفاظ على استقرار الأسعار.<br><br><strong style='color:var(--fail)'>السيناريو 2 — حرب الأسعار (Price War):</strong> أوبك ترفض تحول الإمارات إلى 'راكب مجاني'، وتقرر فتح صناير وإغراق السوق لتأديب المنسحبين. الخطر: أسعار تنهار من 60 إلى 50 دولاراً أو أقل — إعادة سيناريو 2014.",
+    insight: "نقطة العتبة الحرجة في عام 2027: حين يتجاوز الإنتاج الإماراتي 4.5 م.ب، تحدد أوبك مسارها الحاسم.",
+    stats: [
+      { val: "4.5 م.ب", lbl: "العتبة الحرجة (2027)" },
+      { val: "$50-60", lbl: "سعر النفط في سيناريو الحرب" }
+    ]
+  },
+  {
+    category: "النظام العالمي",
+    title: "النظام العالمي الجديد للطاقة",
+    body: "للمرة الأولى في التاريخ، حصة أوبك من الإنتاج العالمي ستنخفض إلى <strong style='color:var(--fail)'>أقل من 30%</strong> — سابقة تاريخية غير مسبوقة. إضافة عامل إيران: رفع إيران إنتاجها بشكل هائل لتعويض خسائر الحرب، مما يضيف سيلاً جديداً من المعروض لسوق تعاني أصلاً من التخمة.",
+    insight: "أوبك تواجه أخطر تحدي وجودي في تاريخها: كيف تحافظ على تماسك مجموعة تنمو طموحات أفرادها أسرع من حصتهم في السوق؟",
+    stats: [
+      { val: "<30%", lbl: "حصة أوبك للمرة الأولى" },
+      { val: "سابقة تاريخية", lbl: "في تاريخ المنظمة" }
+    ]
+  }
+];
+
+const FLASHCARDS = [
+  { q: "ما تاريخ الإعلان الرسمي لانسحاب الإمارات من أوبك؟", a: "1 مايو 2026، بعد 59 عاماً من العضوية. حيّز التنفيذ: 28 أبريل 2026" },
+  { q: "ما هي القوة الإنتاجية الفائضة للإمارات، وكيف تقارن بالدول المنسحبة سابقاً؟", a: "الإمارات: +3.0 مليون برميل/يوم. المنسحبون السابقون (قطر، أنغولا، إندونيسيا): 0.3-0.4 مليون فقط — فارق هائل يجعل انسحابها <strong class='highlight'>خطيراً بشكل استثنائي</strong>" },
+  { q: "ما هي معضلة الراكب المجاني (Free Rider Problem) في سياق أوبك؟", a: "أوبك تخفض إنتاجها ← أسعار ترتفع ← النفط الصخري الأمريكي يستغل الأسعار المرتفعة دون تكلفة خفض ← أوبك تفقد حصتها السوقية. المعضلة: <strong class='highlight'>كيف تمنع الاستفادة المجانية من تضحياتك؟</strong>" },
+  { q: "ما فاتورة الفرصة الضائعة للإمارات جراء حصص أوبك؟", a: "1.2 مليون برميل معطلة × 108 دولار = <strong class='highlight'>47.5 مليار دولار سنوياً!</strong> (130 مليون يومياً / 3.9 مليار شهرياً)" },
+  { q: "ما هو سبب عدم انهيار أسعار النفط فور إعلان الانسحاب الإماراتي؟", a: "عائقان متزامنان: (1) عائق تشغيلي: الأضرار في البنية التحتية تمنع رفع الإنتاج فوراً. (2) عائق لوجستي: مضيق هرمز لا يزال مغلقاً — النفط عالق فيزيائياً" },
+  { q: "ما هو مفهوم Peak Oil Demand وعلاقته باستراتيجية الإمارات؟", a: "ذروة الطلب العالمي على النفط: النقطة التي يبدأ بعدها الطلب بالتراجع بسبب الطاقة النظيفة. الإمارات تريد <strong class='highlight'>تسييل احتياطياتها قبل أن تفقد قيمتها</strong> — حصص أوبك كانت عائقاً" },
+  { q: "متى تأسست أوبك، ومن أسسها؟", a: "سبتمبر 1960، اجتماع بغداد. 5 دول مؤسسة: السعودية، العراق، الكويت، إيران، فنزويلا. الهدف: كسر هيمنة شركات النفط الغربية الكبرى (Seven Sisters)" },
+  { q: "ما نتيجة 'حرب الأسعار' 2014-2016 وما الذي أُنشئ بعدها؟", a: "محاولة أوبك كسر النفط الصخري بإغراق السوق → خسارة <strong class='highlight'>450 مليار دولار</strong> من إيرادات أوبك. الحل: أوبك بلس (OPEC+) — تحالف مع روسيا وحلفائها لتخفيض 1.8 مليون برميل يومياً" },
+  { q: "ما هما سيناريوا رد فعل أوبك على الانسحاب الإماراتي؟", a: "1. <strong class='highlight'>الاستيعاب</strong>: أوبك تحمل العبء وتخفض إنتاجها بنفس حجم الزيادة الإماراتية. 2. <strong class='highlight'>حرب الأسعار</strong>: أوبك تغرق السوق لتأديب المنسحبين → أسعار تهوي لأقل من 50 دولاراً" },
+  { q: "ما نقطة العتبة الحرجة التي تحدد مصير أوبك في 2027؟", a: "حين يتجاوز الإنتاج الإماراتي <strong class='highlight'>4.5 مليون برميل/يوم</strong>، تضطر أوبك لتحديد مسارها الحاسم: الاستيعاب أم الحرب. التوقيت: منتصف إلى أواخر 2027" }
+];
+
+const QUESTIONS = [
+  {
+    type: "اختيار متعدد",
+    q: "ما تاريخ الإعلان الرسمي عن انسحاب الإمارات من أوبك؟",
+    options: ["1 أبريل 2026", "1 مايو 2026", "28 أبريل 2026", "1 مارس 2026"],
+    correct: 1,
+    explanation: "الإعلان الرسمي كان في 1 مايو 2026، بينما حيّز التنفيذ كان 28 أبريل 2026، بعد 59 عاماً من عضوية الإمارات في المنظمة."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما طاقة الإنتاج الفائضة الإماراتية التي تجعل انسحابها استثنائياً بالمقارنة مع المنسحبين السابقين؟",
+    options: ["0.4 مليون برميل/يوم", "1.2 مليون برميل/يوم", "+3.0 مليون برميل/يوم", "1.8 مليون برميل/يوم"],
+    correct: 2,
+    explanation: "الإمارات تمتلك +3.0 مليون برميل/يوم من الطاقة الفائضة، مقارنةً بـ 0.3-0.4 للمنسحبين السابقين كقطر وأنغولا — فارق هائل يجعل خروجها خصماً حقيقياً من قدرة أوبك."
+  },
+  {
+    type: "صح أم خطأ",
+    q: "صح أم خطأ: انهارت أسعار النفط فور الإعلان عن انسحاب الإمارات من أوبك.",
+    options: ["صح — الأسواق تفاعلت فوراً", "خطأ — الأسعار بقيت مستقرة بسبب عوائق تشغيلية ولوجستية"],
+    correct: 1,
+    explanation: "خطأ. الأسعار بقيت مستقرة لسببين: (1) الأضرار في البنية التحتية الإماراتية تمنع رفع الإنتاج فوراً، (2) مضيق هرمز لا يزال مغلقاً بسبب الحرب."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما هي 'فاتورة الفرصة الضائعة' السنوية للإمارات جراء حصص أوبك؟",
+    options: ["3.9 مليار دولار", "13 مليار دولار", "47.5 مليار دولار", "130 مليار دولار"],
+    correct: 2,
+    explanation: "1.2 م.ب (الطاقة المعطلة) × 108 $/برميل = 130 مليون $/يوم × 365 = 47.5 مليار دولار سنوياً — رقم ضخم يبرر قرار الانسحاب اقتصادياً."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما الهدف الاستراتيجي الأصلي من تأسيس أوبك عام 1960؟",
+    options: ["رفع أسعار النفط فقط", "كسر هيمنة شركات النفط الغربية الكبرى", "منع التنافس بين الدول النفطية", "تمويل التنمية الاقتصادية العربية"],
+    correct: 1,
+    explanation: "الهدف الاستراتيجي الأصلي كان كسر هيمنة شركات النفط الغربية الكبرى (Seven Sisters) على تسعير النفط العالمي."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما نتيجة 'حرب الأسعار' التي شنتها أوبك ضد النفط الصخري في 2014-2016؟",
+    options: ["نجاح تام في القضاء على النفط الصخري", "خسارة 450 مليار دولار من إيرادات أوبك", "ارتفاع أسعار النفط لـ 100 دولار", "انسحاب أمريكا من أسواق النفط"],
+    correct: 1,
+    explanation: "خسرت دول أوبك 450 مليار دولار من إيراداتها دون تحقيق الهدف — وهو ما أدى لولادة تحالف أوبك بلس مع روسيا."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما كانت حصة الإمارات في تخفيضات أوبك بلس لعام 2016؟",
+    options: ["486 ألف برميل/يوم", "210 ألف برميل/يوم", "139 ألف برميل/يوم", "600 ألف برميل/يوم"],
+    correct: 2,
+    explanation: "تخفيضات أوبك بلس 2016: السعودية 486 ألف، العراق 210 ألف، الإمارات 139 ألف برميل/يوم. خارج أوبك (روسيا ومجموعتها): 600 ألف برميل."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما الفرق الجوهري بين مطلب الإمارات وموقف أوبك في صدام 2021؟",
+    options: [
+      "الإمارات أرادت خط أساس بناءً على طاقتها في أبريل 2020، أوبك أصر على أكتوبر 2018",
+      "الإمارات أرادت زيادة الإنتاج، أوبك أراد تخفيضه",
+      "الإمارات أرادت الخروج من أوبك بلس، أوبك رفض",
+      "الخلاف كان على سعر البرميل المرجعي"
+    ],
+    correct: 0,
+    explanation: "الإمارات أرادت قياس خط الأساس على طاقتها في أبريل 2020 (4 م.ب) بدلاً من إنتاج أكتوبر 2018 (3.16 م.ب) — فارق 840 ألف برميل يومياً."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما مفهوم Peak Oil Demand وكيف يرتبط بقرار الانسحاب الإماراتي؟",
+    options: [
+      "نقطة أقصى إنتاج نفطي — تريد الإمارات تعظيمه",
+      "نقطة أقصى طلب عالمي على النفط — تريد الإمارات تسييل احتياطياتها قبلها",
+      "سعر النفط الأقصى في التاريخ",
+      "أقصى عدد من حقول النفط القابلة للاستغلال"
+    ],
+    correct: 1,
+    explanation: "Peak Oil Demand هي نقطة ذروة الطلب العالمي التي يبدأ بعدها الطلب بالتراجع مع انتشار الطاقة النظيفة. الإمارات تريد استخراج احتياطياتها قبل أن تفقد قيمتها."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما نقطة العتبة الحرجة عام 2027 التي ستحدد مصير أوبك؟",
+    options: [
+      "وصول إنتاج الإمارات لـ 3.6 مليون برميل",
+      "وصول أسعار النفط لـ 100 دولار",
+      "تجاوز إنتاج الإمارات لـ 4.5 مليون برميل/يوم",
+      "دخول دول جديدة في أوبك بلس"
+    ],
+    correct: 2,
+    explanation: "حين يتجاوز الإنتاج الإماراتي 4.5 م.ب/يوم في 2027، تضطر أوبك للاختيار بين الاستيعاب (تحمل العبء) أو حرب الأسعار — القرار الحاسم في تاريخ المنظمة."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما الخطر الرئيسي في سيناريو 'حرب الأسعار' لرد أوبك على الانسحاب الإماراتي؟",
+    options: [
+      "ارتفاع أسعار النفط لـ 150 دولار",
+      "تفكك أوبك بالكامل",
+      "انهيار الأسعار من 60 إلى 50 دولاراً أو أقل — إعادة سيناريو 2014",
+      "خروج روسيا من أوبك بلس"
+    ],
+    correct: 2,
+    explanation: "في سيناريو حرب الأسعار، تفتح أوبك صناير وتغرق السوق لتأديب المنسحبين، مما قد يهوي بالأسعار (التي كانت تعاني تخمة) من 60 إلى أقل من 50 دولاراً."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما السابقة التاريخية غير المسبوقة التي يصنعها الانسحاب الإماراتي؟",
+    options: [
+      "أول انسحاب من أوبك في التاريخ",
+      "حصة أوبك من الإنتاج العالمي تنخفض لأقل من 30% للمرة الأولى",
+      "أول مرة تتحارب دولتان نفطيتان مباشرة",
+      "أول مرة ينخفض سعر النفط لأقل من 50 دولاراً"
+    ],
+    correct: 1,
+    explanation: "للمرة الأولى في تاريخ المنظمة، ستنخفض حصة أوبك من الإنتاج العالمي إلى أقل من 30% — سابقة تاريخية تعكس تراجع نفوذ الكارتل."
+  },
+  {
+    type: "صح أم خطأ",
+    q: "صح أم خطأ: تأسست أوبك عام 1967 حين انضمت إمارة أبوظبي.",
+    options: ["صح", "خطأ — أوبك تأسست في سبتمبر 1960 في بغداد"],
+    correct: 1,
+    explanation: "خطأ. أوبك تأسست في سبتمبر 1960 في بغداد بـ 5 دول مؤسسة. انضمت أبوظبي عام 1967، ثم ورثت الإمارات العضوية عند تأسيسها عام 1971."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما الدور الذي أثبته تسليح النفط عام 1973 حسب التحليل الاستراتيجي؟",
+    options: [
+      "أوبك مجرد منظمة تجارية عادية",
+      "أوبك قوة سيادية قادرة على إخضاع أقوى اقتصادات العالم",
+      "الولايات المتحدة أقوى من أي سلاح اقتصادي",
+      "سلاح النفط فشل في تحقيق أهدافه"
+    ],
+    correct: 1,
+    explanation: "حظر 1973 دفع الولايات المتحدة للتفكير فعلياً في استخدام القوة العسكرية — ما كشفته وثيقة UK Eyes Alpha — مما أثبت أن أوبك قوة سيادية حقيقية."
+  },
+  {
+    type: "اختيار متعدد",
+    q: "ما المحفز الجيوسياسي الفوري الذي جعل قيود أوبك 'عائقاً لا يُحتمل' للإمارات؟",
+    options: [
+      "انخفاض أسعار النفط في السوق العالمية",
+      "الحرب الأمريكية-الإسرائيلية على إيران وإغلاق هرمز (فبراير 2026)",
+      "ضغوط سعودية متزايدة داخل أوبك",
+      "قرار أمريكي بزيادة إنتاج النفط الصخري"
+    ],
+    correct: 1,
+    explanation: "الحرب على إيران في فبراير 2026 خلقت: دماراً في البنية التحتية الإماراتية ← حاجة ماسة لرؤوس أموال لإعادة الإعمار ← ضرورة رفع الإيرادات النفطية ← قيود أوبك عائق لا يُحتمل."
+  }
+];
+
+const CHALLENGES = [
+  {
+    q: "بصفتك محللاً اقتصادياً في غرفة العمليات: كيف تُقيّم القرار الإماراتي بالانسحاب من منظوري العقلانية الاقتصادية والمخاطر الاستراتيجية؟",
+    modelAnswer: "<strong>من منظور العقلانية الاقتصادية:</strong> القرار عقلاني تماماً. الإمارات تواجه تكلفة فرصة 47.5 مليار دولار سنوياً، وطاقة إنتاجية فائضة تتنامى (من 2.5 إلى 5.5 م.ب مستهدفاً) تعطّلها حصص أوبك. مع اقتراب Peak Oil Demand، منطق تسييل الأصول يستوجب الإنتاج القصوى الآن.<br><br><strong>من منظور المخاطر الاستراتيجية:</strong> سيناريو حرب الأسعار يشكّل الخطر الأكبر — إذا فتحت السعودية صناير الإنتاج رداً على الانسحاب، قد تنهار الأسعار لأقل من 50 دولاراً، ما يُبطل مكسب الحرية الإنتاجية الإماراتية. المحفز الجيوسياسي (الحاجة لتمويل إعادة الإعمار) أضاف بُعداً ضاغطاً جعل هذا القرار ضرورة وليس خياراً."
+  },
+  {
+    q: "هل انسحاب الإمارات نهائي أم مناورة تكتيكية لفرض شروط عودة أفضل داخل أوبك؟ استند في تحليلك لأدلة ملموسة من المحتوى.",
+    modelAnswer: "<strong>حجج الانسحاب النهائي:</strong> (1) تجاوز 59 عاماً من تراكم الخلافات الهيكلية، (2) أزمة 2021 التي لم تُحل جوهرياً بل أُجّلت، (3) استراتيجية تسييل الأصول تتطلب إنتاجاً غير مقيّد لسنوات.<br><br><strong>حجج المناورة التكتيكية:</strong> (1) البيان الدبلوماسي الغامض يترك باب العودة مفتوحاً، (2) العائق التشغيلي (الأضرار + هرمز) يعني الإمارات لن تستطيع رفع إنتاجها فوراً على أي حال، (3) نقطة العتبة في 2027 قد تُعيد رسم المشهد التفاوضي.<br><br><strong>الترجيح المنهجي:</strong> الأدلة تميل للمناورة قصيرة المدى + قرار نهائي طويل المدى — أي 'أنسحب الآن وأعود بشروطي الجديدة فقط إن عرضت السعودية خط أساس يعكس طاقتي الفعلية'."
+  },
+  {
+    q: "صف بالتفصيل ديناميكية 'معضلة الراكب المجاني' في سياق أوبك والنفط الصخري الأمريكي، وما الدرس الاقتصادي الجوهري منها؟",
+    modelAnswer: "<strong>الديناميكية الكاملة:</strong> أوبك تخفض إنتاجها قسراً (تكلفة جماعية) ← أسعار النفط ترتفع (فائدة جماعية) ← أي منتج خارج المنظمة (خاصةً النفط الصخري الأمريكي) يستفيد من الأسعار المرتفعة دون تحمّل أي تكلفة خفض ← هذا المنتج يضخ كميات أكبر مستغلاً الأسعار العالية ← حصة أوبك السوقية تتآكل لصالح الراكب المجاني.<br><br><strong>الدرس الاقتصادي:</strong> في غياب آلية إلزام عالمية، أي سلعة تخضع لقيود جماعية (كأوبك) ستواجه حتماً ظاهرة Defection (الانتهاز) من الفاعلين خارج الاتفاق. هذا ما استدعى توسيع أوبك إلى أوبك بلس — لكنه لم يحل المعضلة جذرياً، بل وسّع نطاقها."
+  }
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let mode = 'full';
+let currentConcept = 0;
+let currentFlash = 0;
+let flashFlipped = false;
+let currentQ = 0;
+let answered = false;
+let score = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let timer = null;
+let timeLeft = 600;
+let currentChallenge = 0;
+let phase = 'concepts';
+
+// ============================================================
+// TIMER
+// ============================================================
+function startTimer() {
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      showScreen('screen-results');
+      renderResults();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+  const s = (timeLeft % 60).toString().padStart(2, '0');
+  document.getElementById('timerText').textContent = `${m}:${s}`;
+  
+  const circumference = 138.16;
+  const progress = timeLeft / 600;
+  const offset = circumference * (1 - progress);
+  document.getElementById('ringProgress').style.strokeDashoffset = offset;
+  
+  if (timeLeft <= 120) {
+    document.getElementById('ringProgress').style.stroke = '#c0392b';
+  } else if (timeLeft <= 300) {
+    document.getElementById('ringProgress').style.stroke = '#c9a84c';
+  }
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function selectMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('mode-' + m).classList.add('selected');
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function updateScore(pts) {
+  score += pts;
+  document.getElementById('scoreDisplay').textContent = score;
+}
+
+function updateProgress(pct) {
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ============================================================
+// SESSION START
+// ============================================================
+function startSession() {
+  timeLeft = 600;
+  score = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  currentConcept = 0;
+  currentQ = 0;
+  currentFlash = 0;
+  currentChallenge = 0;
+  phase = 'concepts';
+  
+  document.getElementById('scoreDisplay').textContent = '0';
+  updateTimerDisplay();
+  startTimer();
+  
+  if (mode === 'quiz') {
+    showScreen('screen-quiz');
+    renderQuestion();
+  } else if (mode === 'flash') {
+    showScreen('screen-flash');
+    renderFlash();
+  } else {
+    buildConceptNav();
+    showScreen('screen-concepts');
+    renderConcept();
+  }
+}
+
+// ============================================================
+// CONCEPTS
+// ============================================================
+function buildConceptNav() {
+  const nav = document.getElementById('conceptNav');
+  const sections = ['الحدث', 'التحليل المقارن', 'التاريخ', 'العصر الذهبي', 'الحصص', 'الراكب المجاني', 'أوبك بلس', 'جوهر الخلاف', 'الصدام 2021', 'المحفز', 'لغز السوق', 'الاستراتيجية', 'السيناريوهات', 'النظام الجديد'];
+  nav.innerHTML = sections.map((s, i) => 
+    `<div class="section-pill ${i===0?'active':''}" id="pill-${i}" onclick="jumpConcept(${i})">${s}</div>`
+  ).join('');
+}
+
+function jumpConcept(idx) {
+  currentConcept = idx;
+  renderConcept();
+  document.querySelectorAll('.section-pill').forEach((p,i) => {
+    p.classList.toggle('active', i === idx);
+  });
+}
+
+function renderConcept() {
+  const c = CONCEPTS[currentConcept];
+  document.getElementById('conceptNum').textContent = currentConcept + 1;
+  document.getElementById('conceptTotal').textContent = CONCEPTS.length;
+  
+  updateProgress(((currentConcept + 1) / CONCEPTS.length) * 60);
+
+  let statsHTML = '';
+  if (c.stats) {
+    statsHTML = `<div class="stat-row">${c.stats.map(s => `
+      <div class="stat-chip">
+        <span class="stat-val">${s.val}</span>
+        <span class="stat-lbl">${s.lbl}</span>
+      </div>`).join('')}</div>`;
+  }
+
+  let timelineHTML = '';
+  if (c.timeline) {
+    timelineHTML = `<div class="timeline" style="margin-top:20px">${c.timeline.map(t => `
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-year">${t.year}</div>
+        <div class="timeline-event">${t.event}</div>
+        <div class="timeline-detail">${t.detail}</div>
+      </div>`).join('')}</div>`;
+  }
+
+  document.getElementById('conceptContent').innerHTML = `
+    <div class="concept-card">
+      <div class="concept-category">${c.category}</div>
+      <h3>${c.title}</h3>
+      <div class="concept-body">${c.body}</div>
+      ${statsHTML}
+      ${timelineHTML}
+      <div class="key-insight">${c.insight}</div>
+    </div>`;
+
+  document.getElementById('btnPrevConcept').disabled = currentConcept === 0;
+  document.getElementById('btnNextConcept').textContent = 
+    currentConcept === CONCEPTS.length - 1 ? 'ابدأ الاختبار ←' : 'التالي ←';
+  
+  document.querySelectorAll('.section-pill').forEach((p,i) => {
+    p.classList.toggle('active', i === currentConcept);
+  });
+}
+
+function navConcept(dir) {
+  currentConcept += dir;
+  if (currentConcept >= CONCEPTS.length) {
+    showScreen('screen-quiz');
+    renderQuestion();
+    return;
+  }
+  if (currentConcept < 0) currentConcept = 0;
+  renderConcept();
+}
+
+// ============================================================
+// FLASHCARDS
+// ============================================================
+function renderFlash() {
+  const f = FLASHCARDS[currentFlash];
+  document.getElementById('flashNum').textContent = currentFlash + 1;
+  document.getElementById('flashTotal').textContent = FLASHCARDS.length;
+  document.getElementById('flashQ').textContent = f.q;
+  document.getElementById('flashA').innerHTML = f.a;
+  document.getElementById('flashcardInner').classList.remove('flipped');
+  flashFlipped = false;
+  updateProgress(((currentFlash + 1) / FLASHCARDS.length) * 100);
+}
+
+function flipCard() {
+  flashFlipped = !flashFlipped;
+  document.getElementById('flashcardInner').classList.toggle('flipped', flashFlipped);
+  if (flashFlipped) {
+    updateScore(2);
+    showToast('🎯 +2 نقاط', 'correct');
+  }
+}
+
+function navFlash(dir) {
+  currentFlash = (currentFlash + dir + FLASHCARDS.length) % FLASHCARDS.length;
+  renderFlash();
+}
+
+// ============================================================
+// QUIZ
+// ============================================================
+function renderQuestion() {
+  if (currentQ >= QUESTIONS.length) {
+    if (mode === 'full') {
+      showScreen('screen-analyst');
+      renderChallenge();
+    } else {
+      showScreen('screen-results');
+      renderResults();
+    }
+    return;
+  }
+  
+  answered = false;
+  const q = QUESTIONS[currentQ];
+  
+  document.getElementById('quizTypeBadge').textContent = q.type;
+  document.getElementById('qNum').textContent = currentQ + 1;
+  document.getElementById('qTotal').textContent = QUESTIONS.length;
+  document.getElementById('quizQuestion').textContent = q.q;
+  document.getElementById('btnNextQ').style.display = 'none';
+  
+  const letters = ['أ', 'ب', 'ج', 'د'];
+  document.getElementById('optionsGrid').innerHTML = q.options.map((opt, i) => `
+    <button class="option-btn" onclick="selectAnswer(${i})" id="opt-${i}">
+      <span class="option-letter">${letters[i]}</span>
+      <span>${opt}</span>
+    </button>`).join('');
+  
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback-box';
+  fb.innerHTML = '';
+  
+  updateProgress(60 + ((currentQ + 1) / QUESTIONS.length) * 35);
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  
+  const q = QUESTIONS[currentQ];
+  const buttons = document.querySelectorAll('.option-btn');
+  buttons.forEach(b => b.disabled = true);
+  
+  const isCorrect = idx === q.correct;
+  
+  buttons[idx].classList.add(isCorrect ? 'correct' : 'wrong');
+  if (!isCorrect) buttons[q.correct].classList.add('correct');
+  
+  const fb = document.getElementById('feedbackBox');
+  if (isCorrect) {
+    correctCount++;
+    updateScore(10);
+    fb.className = 'feedback-box correct-fb show';
+    fb.innerHTML = `<div class="feedback-title">✅ إجابة صحيحة! +10 نقاط</div>${q.explanation}`;
+    showToast('✅ صحيح! +10 نقاط', 'correct');
+  } else {
+    wrongCount++;
+    fb.className = 'feedback-box wrong-fb show';
+    fb.innerHTML = `<div class="feedback-title">❌ إجابة خاطئة</div>${q.explanation}`;
+    showToast('❌ خطأ — راجع التفسير', 'wrong');
+  }
+  
+  document.getElementById('btnNextQ').style.display = 'flex';
+}
+
+function nextQuestion() {
+  currentQ++;
+  renderQuestion();
+}
+
+// ============================================================
+// ANALYST CHALLENGES
+// ============================================================
+function renderChallenge() {
+  if (currentChallenge >= CHALLENGES.length) {
+    showScreen('screen-results');
+    renderResults();
+    return;
+  }
+  
+  const ch = CHALLENGES[currentChallenge];
+  document.getElementById('challengeContent').innerHTML = `
+    <div class="challenge-question">
+      <div class="challenge-label">🎓 تحدي المحلل الاقتصادي ${currentChallenge + 1} / ${CHALLENGES.length}</div>
+      <div class="challenge-text">${ch.q}</div>
+      <textarea class="challenge-textarea" id="challengeInput" placeholder="اكتب تحليلك هنا... فكّر كمحلل اقتصادي في غرفة عمليات استراتيجية"></textarea>
+    </div>
+    <div class="challenge-answer" id="modelAnswer">
+      <strong>📋 الإجابة النموذجية للمحلل الخبير:</strong><br><br>${ch.modelAnswer}
+    </div>`;
+  
+  updateProgress(95);
+}
+
+function revealAnswer() {
+  const ans = document.getElementById('modelAnswer');
+  if (ans) {
+    ans.classList.add('show');
+    updateScore(5);
+    showToast('📚 +5 نقاط للدراسة', '');
+  }
+}
+
+function nextChallenge() {
+  currentChallenge++;
+  if (currentChallenge >= CHALLENGES.length) {
+    showScreen('screen-results');
+    renderResults();
+  } else {
+    renderChallenge();
+  }
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+function renderResults() {
+  clearInterval(timer);
+  updateProgress(100);
+  
+  const pct = QUESTIONS.length > 0 ? Math.round((correctCount / QUESTIONS.length) * 100) : 0;
+  const timeUsed = 600 - timeLeft;
+  const minLeft = Math.floor(timeLeft / 60);
+  const secLeft = timeLeft % 60;
+  
+  const badge = document.getElementById('resultsBadge');
+  const scoreEl = document.getElementById('resultsScore');
+  const labelEl = document.getElementById('resultsLabel');
+  const msgEl = document.getElementById('resultsMessage');
+  
+  if (pct >= 80) {
+    badge.className = 'results-badge excellent';
+    badge.textContent = '🏆';
+    scoreEl.textContent = score + ' نقطة';
+    labelEl.textContent = 'محلل اقتصادي متمكن!';
+    msgEl.innerHTML = 'أداء استثنائي. أنت تفهم الديناميكيات العميقة لأسواق النفط والتوازنات الجيوسياسية. جاهز لتحليل الأسواق على مستوى احترافي.';
+  } else if (pct >= 60) {
+    badge.className = 'results-badge good';
+    badge.textContent = '📊';
+    scoreEl.textContent = score + ' نقطة';
+    labelEl.textContent = 'محلل واعد — أكمل التدريب';
+    msgEl.innerHTML = 'أداء جيد مع مجال للتطوير. راجع مفاهيم الطاقة الإنتاجية الفائضة ومعضلة الراكب المجاني — هما جوهر الفهم الاقتصادي لهذا الملف.';
+  } else {
+    badge.className = 'results-badge needs-work';
+    badge.textContent = '📖';
+    scoreEl.textContent = score + ' نقطة';
+    labelEl.textContent = 'أعد الجلسة لترسيخ المفاهيم';
+    msgEl.innerHTML = 'المحتوى ثري ويحتاج جلسة إضافية. ابدأ بمراجعة المفاهيم (وضع البطاقات أو المراجعة) قبل الاختبار.';
+  }
+  
+  document.getElementById('resCorrect').textContent = correctCount;
+  document.getElementById('resWrong').textContent = wrongCount;
+  document.getElementById('resTime').textContent = `${minLeft}:${secLeft.toString().padStart(2,'0')}`;
+}
+
+function restartSession() {
+  clearInterval(timer);
+  showScreen('screen-welcome');
+}
+
+// ============================================================
+// KEYBOARD NAVIGATION
+// ============================================================
+document.addEventListener('keydown', e => {
+  const activeScreen = document.querySelector('.screen.active').id;
+  
+  if (activeScreen === 'screen-concepts') {
+    if (e.key === 'ArrowLeft') navConcept(1);
+    if (e.key === 'ArrowRight') navConcept(-1);
+    if (e.key === ' ') { e.preventDefault(); navConcept(1); }
+  }
+  
+  if (activeScreen === 'screen-flash') {
+    if (e.key === 'ArrowLeft') navFlash(1);
+    if (e.key === 'ArrowRight') navFlash(-1);
+    if (e.key === ' ') { e.preventDefault(); flipCard(); }
+  }
+  
+  if (activeScreen === 'screen-quiz') {
+    if (!answered) {
+      if (e.key === '1') selectAnswer(0);
+      if (e.key === '2') selectAnswer(1);
+      if (e.key === '3') selectAnswer(2);
+      if (e.key === '4') selectAnswer(3);
+    }
+    if (answered && e.key === 'Enter') nextQuestion();
+  }
+});
+</script>
+</body>
+</html>
